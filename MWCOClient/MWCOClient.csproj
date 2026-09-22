@@ -1,0 +1,200 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">x64</Platform>
+    <ProjectGuid>{1D1D95B9-4255-44BF-B414-EAC95A5F5022}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <RootNamespace>MWCOClient</RootNamespace>
+    <AssemblyName>MWCOClient</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x64' ">
+    <PlatformTarget>x64</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
+    <PlatformTarget>x64</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Assembly-CSharp" />
+    <Reference Include="Assembly-CSharp-firstpass" />
+    <Reference Include="Assembly-UnityScript-firstpass" />
+    <Reference Include="Boo.Lang" />
+    <Reference Include="ES2" />
+    <Reference Include="Mono.Security" />
+    <Reference Include="PlayMaker" />
+    <Reference Include="System" />
+    <Reference Include="System.Core" />
+    <Reference Include="UnityEngine" />
+    <Reference Include="UnityEngine.UI" />
+  </ItemGroup>
+  <ItemGroup>
+    <AppDesigner Include="Properties\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="-PrivateImplementationDetails-.cs" />
+    <Compile Include="GameObjectExtensions.cs" />
+    <Compile Include="IKManager.cs" />
+    <Compile Include="LobbyItem.cs" />
+    <Compile Include="MWCO\Chat.cs" />
+    <Compile Include="MWCO\CheapOnLevelLoad.cs" />
+    <Compile Include="MWCO\Client.cs" />
+    <Compile Include="MWCO\DevTools.cs" />
+    <Compile Include="MWCO\Game\AxController.cs" />
+    <Compile Include="MWCO\Game\CarCollisionHandler.cs" />
+    <Compile Include="MWCO\Game\CollisionDetection.cs" />
+    <Compile Include="MWCO\Game\Components\ObjectSyncComponent.cs" />
+    <Compile Include="MWCO\Game\Components\ObjectSyncPlayerComponent.cs" />
+    <Compile Include="MWCO\Game\Components\PickupableMetaDataComponent.cs" />
+    <Compile Include="MWCO\Game\EventHook.cs" />
+    <Compile Include="MWCO\Game\GameCallbacks.cs" />
+    <Compile Include="MWCO\Game\GameDoorsManager.cs" />
+    <Compile Include="MWCO\Game\GameHouseDatabase.cs" />
+    <Compile Include="MWCO\Game\GamePickupableDatabase.cs" />
+    <Compile Include="MWCO\Game\GameVehicleDatabase.cs" />
+    <Compile Include="MWCO\Game\GameWeatherManager.cs" />
+    <Compile Include="MWCO\Game\GameWorld.cs" />
+    <Compile Include="MWCO\Game\Hooks\PlayMakerActionHooks.cs" />
+    <Compile Include="MWCO\Game\IGameObjectCollector.cs" />
+    <Compile Include="MWCO\Game\IObjectSubtype.cs" />
+    <Compile Include="MWCO\Game\ISyncedObject.cs" />
+    <Compile Include="MWCO\Game\LightSwitchManager.cs" />
+    <Compile Include="MWCO\Game\ObjectSyncManager.cs" />
+    <Compile Include="MWCO\Game\Objects\AIVehicle.cs" />
+    <Compile Include="MWCO\Game\Objects\Boot.cs" />
+    <Compile Include="MWCO\Game\Objects\BootBox.cs" />
+    <Compile Include="MWCO\Game\Objects\CarDoor.cs" />
+    <Compile Include="MWCO\Game\Objects\CarDoorF.cs" />
+    <Compile Include="MWCO\Game\Objects\ComponentUtil.cs" />
+    <Compile Include="MWCO\Game\Objects\GameDoor.cs" />
+    <Compile Include="MWCO\Game\Objects\GamePlayer.cs" />
+    <Compile Include="MWCO\Game\Objects\GarageDoor.cs" />
+    <Compile Include="MWCO\Game\Objects\LightSwitch.cs" />
+    <Compile Include="MWCO\Game\Objects\Logging.cs" />
+    <Compile Include="MWCO\Game\Objects\PassengerSeat.cs" />
+    <Compile Include="MWCO\Game\Objects\Pickupable.cs" />
+    <Compile Include="MWCO\Game\Objects\PickupableTypes\BeerCase.cs" />
+    <Compile Include="MWCO\Game\Objects\PickupableTypes\Bolt.cs" />
+    <Compile Include="MWCO\Game\Objects\PickupableTypes\BoltOld.cs" />
+    <Compile Include="MWCO\Game\Objects\PickupableTypes\CarPart.cs" />
+    <Compile Include="MWCO\Game\Objects\PickupableTypes\CarPartOld.cs" />
+    <Compile Include="MWCO\Game\Objects\PickupableTypes\Consumable.cs" />
+    <Compile Include="MWCO\Game\Objects\PickupableTypes\Firewood.cs" />
+    <Compile Include="MWCO\Game\Objects\PickupableTypes\Hose.cs" />
+    <Compile Include="MWCO\Game\Objects\PickupableTypes\PubFood.cs" />
+    <Compile Include="MWCO\Game\Objects\PickupableTypes\ShoppingBag.cs" />
+    <Compile Include="MWCO\Game\Objects\PickupableTypes\Tool.cs" />
+    <Compile Include="MWCO\Game\Objects\PickupableTypes\Trigger.cs" />
+    <Compile Include="MWCO\Game\Objects\PickupableTypes\TriggerOld.cs" />
+    <Compile Include="MWCO\Game\Objects\PlayerHouse.cs" />
+    <Compile Include="MWCO\Game\Objects\PlayerVehicle.cs" />
+    <Compile Include="MWCO\Game\Objects\ReapplyJoint.cs" />
+    <Compile Include="MWCO\Game\Objects\Rivett.cs" />
+    <Compile Include="MWCO\Game\Objects\SideDoor.cs" />
+    <Compile Include="MWCO\Game\Objects\Train.cs" />
+    <Compile Include="MWCO\Game\Objects\TransformSync.cs" />
+    <Compile Include="MWCO\Game\Places\Factory.cs" />
+    <Compile Include="MWCO\Game\Places\LODManager.cs" />
+    <Compile Include="MWCO\Game\Places\Peraportti.cs" />
+    <Compile Include="MWCO\Game\Places\Shop.cs" />
+    <Compile Include="MWCO\Game\SeatbeltHandler.cs" />
+    <Compile Include="MWCO\Game\SleepRequest.cs" />
+    <Compile Include="MWCO\Game\TrafficManager.cs" />
+    <Compile Include="MWCO\InstanceDebugger.cs" />
+    <Compile Include="MWCO\Math\QuaternionInterpolator.cs" />
+    <Compile Include="MWCO\Math\TransformInterpolator.cs" />
+    <Compile Include="MWCO\Math\Vector3Extensions.cs" />
+    <Compile Include="MWCO\Math\Vector3Interpolator.cs" />
+    <Compile Include="MWCO\MessageSeverity.cs" />
+    <Compile Include="MWCO\MPController.cs" />
+    <Compile Include="MWCO\Network\INetMessage.cs" />
+    <Compile Include="MWCO\Network\Messages\AnimSyncMessage.cs" />
+    <Compile Include="MWCO\Network\Messages\AskForWorldStateMessage.cs" />
+    <Compile Include="MWCO\Network\Messages\ChatMessage.cs" />
+    <Compile Include="MWCO\Network\Messages\ColorMessage.cs" />
+    <Compile Include="MWCO\Network\Messages\DisconnectMessage.cs" />
+    <Compile Include="MWCO\Network\Messages\DoorsInitMessage.cs" />
+    <Compile Include="MWCO\Network\Messages\EventHookSyncMessage.cs" />
+    <Compile Include="MWCO\Network\Messages\FSMValueChangeMessage.cs" />
+    <Compile Include="MWCO\Network\Messages\FullWorldSyncMessage.cs" />
+    <Compile Include="MWCO\Network\Messages\HandshakeMessage.cs" />
+    <Compile Include="MWCO\Network\Messages\HeartbeatMessage.cs" />
+    <Compile Include="MWCO\Network\Messages\HeartbeatResponseMessage.cs" />
+    <Compile Include="MWCO\Network\Messages\HouseSwitchMessage.cs" />
+    <Compile Include="MWCO\Network\Messages\LightSwitchMessage.cs" />
+    <Compile Include="MWCO\Network\Messages\MessageIds.cs" />
+    <Compile Include="MWCO\Network\Messages\MessageIdsHelpers.cs" />
+    <Compile Include="MWCO\Network\Messages\ModChangeMessage.cs" />
+    <Compile Include="MWCO\Network\Messages\ModOSCMessage.cs" />
+    <Compile Include="MWCO\Network\Messages\ObjectSyncMessage.cs" />
+    <Compile Include="MWCO\Network\Messages\ObjectSyncRequestMessage.cs" />
+    <Compile Include="MWCO\Network\Messages\ObjectSyncResponseMessage.cs" />
+    <Compile Include="MWCO\Network\Messages\OpenDoorsMessage.cs" />
+    <Compile Include="MWCO\Network\Messages\OrderListMessage.cs" />
+    <Compile Include="MWCO\Network\Messages\PickedUpSync.cs" />
+    <Compile Include="MWCO\Network\Messages\PickupableActivateMessage.cs" />
+    <Compile Include="MWCO\Network\Messages\PickupableDestroyMessage.cs" />
+    <Compile Include="MWCO\Network\Messages\PickupableSetPositionMessage.cs" />
+    <Compile Include="MWCO\Network\Messages\PickupableSpawnMessage.cs" />
+    <Compile Include="MWCO\Network\Messages\PlayerSyncMessage.cs" />
+    <Compile Include="MWCO\Network\Messages\QuaternionMessage.cs" />
+    <Compile Include="MWCO\Network\Messages\SatsumaSwitchMessage.cs" />
+    <Compile Include="MWCO\Network\Messages\SaveMessage.cs" />
+    <Compile Include="MWCO\Network\Messages\TransformMessage.cs" />
+    <Compile Include="MWCO\Network\Messages\Vector3Message.cs" />
+    <Compile Include="MWCO\Network\Messages\VehicleEnterMessage.cs" />
+    <Compile Include="MWCO\Network\Messages\VehicleInitMessage.cs" />
+    <Compile Include="MWCO\Network\Messages\VehicleLeaveMessage.cs" />
+    <Compile Include="MWCO\Network\Messages\VehicleStateMessage.cs" />
+    <Compile Include="MWCO\Network\Messages\VehicleSwitchMessage.cs" />
+    <Compile Include="MWCO\Network\Messages\WeatherUpdateMessage.cs" />
+    <Compile Include="MWCO\Network\Messages\WorldPeriodicalUpdateMessage.cs" />
+    <Compile Include="MWCO\Network\NetLocalPlayer.cs" />
+    <Compile Include="MWCO\Network\NetManager.cs" />
+    <Compile Include="MWCO\Network\NetMessageHandler.cs" />
+    <Compile Include="MWCO\Network\NetPickupable.cs" />
+    <Compile Include="MWCO\Network\NetPlayer.cs" />
+    <Compile Include="MWCO\Network\NetStatistics.cs" />
+    <Compile Include="MWCO\Network\NetWorld.cs" />
+    <Compile Include="MWCO\Network\PlayerAnimManager.cs" />
+    <Compile Include="MWCO\PlayMakerUtils.cs" />
+    <Compile Include="MWCO\Properties\Resources.cs" />
+    <Compile Include="MWCO\RespawnController.cs" />
+    <Compile Include="MWCO\UI\Button.cs" />
+    <Compile Include="MWCO\UI\Console.cs" />
+    <Compile Include="MWCO\UI\CustomButton.cs" />
+    <Compile Include="MWCO\UI\HoverUI.cs" />
+    <Compile Include="MWCO\UI\MPGUI.cs" />
+    <Compile Include="MWCO\UserPreferences.cs" />
+    <Compile Include="MWCO\Utilities\ErrorHandling.cs" />
+    <Compile Include="MWCO\Utilities\GameObjectExtensions.cs" />
+    <Compile Include="MWCO\Utilities\IMGUIUtils.cs" />
+    <Compile Include="MWCO\Utilities\Logger.cs" />
+    <Compile Include="MWCO\Utilities\RichTextExtensions.cs" />
+    <Compile Include="MWCO\Utilities\Styles.cs" />
+    <Compile Include="MWCO\Utils.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="System\Net\SecurityProtocolTypeExtensions.cs" />
+    <Compile Include="ValueDuple.cs" />
+    <Compile Include="ValueTuple.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="MWCO\Properties\Resources.resources" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+</Project>
