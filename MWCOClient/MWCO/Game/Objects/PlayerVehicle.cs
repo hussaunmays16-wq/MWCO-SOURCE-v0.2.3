@@ -477,6 +477,51 @@ namespace MWCO.Game.Objects
 			return true;
 		}
 
+		public void ResetRemoteInputs()
+		{
+			// v0.3.2 backport: when the driver exits, observers must not keep stale throttle/brake
+			// (engine revving with nobody in the driver's seat).
+			try
+			{
+				this.Throttle = 0f;
+				this.Brake = 0f;
+			}
+			catch (Exception ex)
+			{
+				Logger.Debug("ResetRemoteInputs failed: " + ex);
+			}
+		}
+
+		public float[] GetWheelRpms()
+		{
+			try
+			{
+				if (!this.wheelCollidersSearched)
+				{
+					this.wheelCollidersSearched = true;
+					if (this.ParentGameObject != null)
+					{
+						this.wheelCollidersCache = this.ParentGameObject.GetComponentsInChildren<WheelCollider>(true);
+					}
+				}
+				if (this.wheelCollidersCache == null || this.wheelCollidersCache.Length == 0)
+				{
+					return null;
+				}
+				float[] array = new float[this.wheelCollidersCache.Length];
+				for (int i = 0; i < this.wheelCollidersCache.Length; i++)
+				{
+					array[i] = ((this.wheelCollidersCache[i] != null) ? this.wheelCollidersCache[i].rpm : 0f);
+				}
+				return array;
+			}
+			catch (Exception ex)
+			{
+				Logger.Debug("GetWheelRpms failed: " + ex);
+				return null;
+			}
+		}
+
 		public float[] ReturnSyncedVariables(bool sendAllVariables)
 		{
 			if (this.isSyncing)
@@ -3001,6 +3046,10 @@ namespace MWCO.Game.Objects
 		public PlayerVehicle.DrivingStates CurrentDrivingState = PlayerVehicle.DrivingStates.None;
 
 		private CarDynamics dynamics;
+
+		private WheelCollider[] wheelCollidersCache;
+
+		private bool wheelCollidersSearched;
 
 		public Drivetrain driveTrain;
 

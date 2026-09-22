@@ -709,7 +709,7 @@ namespace MWCO.Network
 			{
 				if (netPlayer != null && (netPlayer.isConnected || message is FullWorldSyncMessage || message is PlayerSyncMessage) && netPlayer != null)
 				{
-					netPlayer.SendPacket(memoryStream.GetBuffer(), sendType, channel);
+					netPlayer.SendPacket(memoryStream.ToArray(), sendType, channel);
 				}
 			}
 			return true;
@@ -726,7 +726,7 @@ namespace MWCO.Network
 			{
 				if (netPlayer.SteamId == sender)
 				{
-					return netPlayer.SendPacket(memoryStream.GetBuffer(), sendType, channel);
+					return netPlayer.SendPacket(memoryStream.ToArray(), sendType, channel);
 				}
 			}
 			return true;
@@ -739,7 +739,7 @@ namespace MWCO.Network
 				return false;
 			}
 			MemoryStream memoryStream = new MemoryStream();
-			return this.WriteMessage(message, memoryStream) && player.SendPacket(memoryStream.GetBuffer(), sendType, channel);
+			return this.WriteMessage(message, memoryStream) && player.SendPacket(memoryStream.ToArray(), sendType, channel);
 		}
 
 		private void OnGameLobbyJoinRequested(GameLobbyJoinRequested_t request)

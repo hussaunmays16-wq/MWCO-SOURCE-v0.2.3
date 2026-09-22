@@ -88,7 +88,7 @@ namespace MWCO
 
 		public static GameObject uiGameObject;
 
-		public static string ModVersion = "0.2.3";
+		public static string ModVersion = "0.2.3-v032h1";
 
 		public static string Data = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.LocalApplicationData), "MWCO");
 

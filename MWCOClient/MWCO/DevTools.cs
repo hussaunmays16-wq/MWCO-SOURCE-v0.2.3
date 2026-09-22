@@ -122,6 +122,7 @@ namespace MWCO
 				}
 				gameObject.transform.rotation = DevTools.localPlayer.transform.rotation;
 				gameObject.transform.position = DevTools.localPlayer.transform.position + DevTools.localPlayer.transform.rotation * Vector3.forward * 5f;
+				DevTools.ResetObjectMomentum(gameObject);
 				MWCO.UI.Console.ConsoleMessage("Teleported " + text3 + " to you!");
 			});
 			MWCO.UI.Console.RegisterCommand("gotoitem", delegate(string[] args)
@@ -588,6 +589,34 @@ namespace MWCO
 			}
 		}
 
+		private static void ResetObjectMomentum(GameObject go)
+		{
+			// v0.3.2 backport: a teleported object must not keep its old physics momentum
+			// (cars flying across the map / rolling backwards forever after F4 teleport).
+			try
+			{
+				if (go == null)
+				{
+					return;
+				}
+				Rigidbody rigidbody = go.GetComponentInParent<Rigidbody>();
+				if (rigidbody == null)
+				{
+					rigidbody = go.GetComponentInChildren<Rigidbody>(true);
+				}
+				if (rigidbody == null)
+				{
+					return;
+				}
+				rigidbody.velocity = Vector3.zero;
+				rigidbody.angularVelocity = Vector3.zero;
+			}
+			catch (Exception ex)
+			{
+				Logger.Debug("ResetObjectMomentum failed: " + ex);
+			}
+		}
+
 		public static void UpdatePlayer()
 		{
 			if (DevTools.spawnVehicle)
@@ -621,6 +650,7 @@ namespace MWCO
 				Vector3 vector = DevTools.localPlayer.transform.rotation * Vector3.forward * 5f;
 				vector.y += 0.3f;
 				gameObject.transform.position = DevTools.localPlayer.transform.position + vector;
+				DevTools.ResetObjectMomentum(gameObject);
 				Logger.Debug("Sending reposition sync for " + gameObject.name);
 				ObjectSyncComponent component = gameObject.GetComponent<ObjectSyncComponent>();
 				if (component != null)
@@ -966,6 +996,7 @@ namespace MWCO
 				}
 				gameObject.transform.rotation = DevTools.localPlayer.transform.rotation;
 				gameObject.transform.position = DevTools.localPlayer.transform.position + DevTools.localPlayer.transform.rotation * Vector3.forward * 5f;
+				DevTools.ResetObjectMomentum(gameObject);
 				MWCO.UI.Console.ConsoleMessage("Teleported " + text + " to you!");
 			}
 

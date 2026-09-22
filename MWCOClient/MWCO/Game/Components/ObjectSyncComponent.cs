@@ -3,6 +3,7 @@ using MWCO.Game.Objects;
 using MWCO.Game.Objects.PickupableTypes;
 using MWCO.Math;
 using MWCO.Network;
+using MWCO.Network.Messages;
 using MWCO.Utilities;
 using Steamworks;
 using UnityEngine;
@@ -85,6 +86,7 @@ namespace MWCO.Game.Components
 		private void Update()
 		{
 			this.InterpolatePos();
+			this.ApplyReceivedWheelRpms();
 			if (this.Name != base.transform.name)
 			{
 				this.Name = base.transform.name;
@@ -258,12 +260,33 @@ namespace MWCO.Game.Components
 				NetLocalPlayer.Instance.SendObjectSync(this.ObjectID, base.transform.position, base.transform.rotation, type, null);
 				return;
 			}
+			Vector3Message bodyVelocity = null;
+			Vector3Message bodyAngularVelocity = null;
+			float[] wheelRpms = null;
+			try
+			{
+				Rigidbody syncedRigidbody = this.GetSyncedRigidbody();
+				if (syncedRigidbody != null && !syncedRigidbody.isKinematic)
+				{
+					bodyVelocity = Utils.GameVec3ToNet(syncedRigidbody.velocity);
+					bodyAngularVelocity = Utils.GameVec3ToNet(syncedRigidbody.angularVelocity);
+				}
+				PlayerVehicle playerVehicle = this.syncedObject as PlayerVehicle;
+				if (playerVehicle != null && playerVehicle.DriverIsLocal)
+				{
+					wheelRpms = playerVehicle.GetWheelRpms();
+				}
+			}
+			catch (Exception ex)
+			{
+				Logger.Debug("SendObjectSync body-state gather failed: " + ex);
+			}
 			if (sendVariables)
 			{
-				NetLocalPlayer.Instance.SendObjectSync(this.ObjectID, this.syncedObject.ObjectTransform().position, this.syncedObject.ObjectTransform().rotation, type, this.syncedObject.ReturnSyncedVariables(true));
+				NetLocalPlayer.Instance.SendObjectSync(this.ObjectID, this.syncedObject.ObjectTransform().position, this.syncedObject.ObjectTransform().rotation, type, this.syncedObject.ReturnSyncedVariables(true), bodyVelocity, bodyAngularVelocity, wheelRpms);
 				return;
 			}
-			NetLocalPlayer.Instance.SendObjectSync(this.ObjectID, this.syncedObject.ObjectTransform().position, this.syncedObject.ObjectTransform().rotation, type, null);
+			NetLocalPlayer.Instance.SendObjectSync(this.ObjectID, this.syncedObject.ObjectTransform().position, this.syncedObject.ObjectTransform().rotation, type, null, bodyVelocity, bodyAngularVelocity, wheelRpms);
 		}
 
 		public void RequestObjectSync()
@@ -470,12 +493,100 @@ namespace MWCO.Game.Components
 
 		private bool ShouldInterpolate(Vector3 pos)
 		{
+			if (this.hasReceivedBodyState && this.ObjectType == ObjectSyncManager.ObjectTypes.PlayerVehicle && this.lastReceivedBodySpeedSqr < 0.0025f)
+			{
+				// v0.3.2 backport: parked vehicle — snap to the synced pose instead of interpolating (kills parked rubberband)
+				return false;
+			}
 			return Vector3.Distance(pos, this.syncedObject.ObjectTransform().position) <= 50f && (this.ObjectType == ObjectSyncManager.ObjectTypes.PlayerVehicle || this.ObjectType == ObjectSyncManager.ObjectTypes.AIVehicle || (this.ObjectType == ObjectSyncManager.ObjectTypes.Pickupable && base.gameObject.GetComponent<CarPartOld>() == null) || this.ObjectType == ObjectSyncManager.ObjectTypes.CarDoor || this.ObjectType == ObjectSyncManager.ObjectTypes.Boot || this.ObjectType == ObjectSyncManager.ObjectTypes.CarDoorF || this.ObjectType == ObjectSyncManager.ObjectTypes.BootF || this.ObjectType == ObjectSyncManager.ObjectTypes.Transform);
 		}
 
 		public ISyncedObject GetObjectSubtype()
 		{
 			return this.syncedObject;
+		}
+
+		private Rigidbody GetSyncedRigidbody()
+		{
+			if (this.rigidbodyLookupDone)
+			{
+				return this.cachedRigidbody;
+			}
+			if (this.syncedObject == null)
+			{
+				return null;
+			}
+			Transform transform = this.syncedObject.ObjectTransform();
+			if (transform != null)
+			{
+				this.cachedRigidbody = transform.GetComponentInParent<Rigidbody>();
+			}
+			this.rigidbodyLookupDone = true;
+			return this.cachedRigidbody;
+		}
+
+		public void SetRemoteBodyState(Vector3 velocity, Vector3 angularVelocity, bool hasAngularVelocity, float[] wheelRpms)
+		{
+			// v0.3.2 backport: apply the owner's rigidbody velocity with the pose so leftover
+			// local physics from interpolation cannot keep dragging the vehicle.
+			try
+			{
+				Rigidbody syncedRigidbody = this.GetSyncedRigidbody();
+				if (syncedRigidbody != null && !syncedRigidbody.isKinematic)
+				{
+					syncedRigidbody.velocity = velocity;
+					if (hasAngularVelocity)
+					{
+						syncedRigidbody.angularVelocity = angularVelocity;
+					}
+				}
+				this.lastReceivedBodySpeedSqr = velocity.sqrMagnitude;
+				this.hasReceivedBodyState = true;
+				this.receivedWheelRpms = wheelRpms;
+			}
+			catch (Exception ex)
+			{
+				Logger.Debug("SetRemoteBodyState failed: " + ex);
+			}
+		}
+
+		private void ApplyReceivedWheelRpms()
+		{
+			// v0.3.2 backport: wheel roll sync (best-effort — rotates wheel transforms on remote copies)
+			if (this.receivedWheelRpms == null || this.receivedWheelRpms.Length == 0)
+			{
+				return;
+			}
+			try
+			{
+				if (this.wheelColliders == null)
+				{
+					if (this.syncedObject == null)
+					{
+						return;
+					}
+					Transform transform = this.syncedObject.ObjectTransform();
+					if (transform == null)
+					{
+						return;
+					}
+					this.wheelColliders = transform.GetComponentsInChildren<WheelCollider>(true);
+				}
+				int num = System.Math.Min(this.wheelColliders.Length, this.receivedWheelRpms.Length);
+				for (int i = 0; i < num; i++)
+				{
+					WheelCollider wheelCollider = this.wheelColliders[i];
+					if (wheelCollider != null)
+					{
+						wheelCollider.transform.Rotate(this.receivedWheelRpms[i] * 6f * Time.deltaTime, 0f, 0f, Space.Self);
+					}
+				}
+			}
+			catch (Exception ex)
+			{
+				Logger.Debug("ApplyReceivedWheelRpms failed: " + ex);
+				this.receivedWheelRpms = null;
+			}
 		}
 
 		public ObjectSyncComponent()
@@ -535,5 +646,17 @@ namespace MWCO.Game.Components
 		public bool isAI;
 
 		private bool npcRaycastDisabled;
+
+		private Rigidbody cachedRigidbody;
+
+		private bool rigidbodyLookupDone;
+
+		private bool hasReceivedBodyState;
+
+		private float lastReceivedBodySpeedSqr;
+
+		private float[] receivedWheelRpms;
+
+		private WheelCollider[] wheelColliders;
 	}
 }

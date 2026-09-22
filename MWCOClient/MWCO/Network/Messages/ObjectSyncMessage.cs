@@ -18,6 +18,9 @@ namespace MWCO.Network.Messages
 			this.position = new Vector3Message();
 			this.rotation = new QuaternionMessage();
 			this.syncedVariables = new float[0];
+			this.velocity = new Vector3Message();
+			this.angularVelocity = new Vector3Message();
+			this.wheelRpms = new float[0];
 		}
 
 		public bool Write(BinaryWriter writer)
@@ -52,6 +55,22 @@ namespace MWCO.Network.Messages
 					if ((this.optionalsMask & 4) != 0)
 					{
 						writer.Write(this.pickUp);
+					}
+					if ((this.optionalsMask & 8) != 0 && !this.velocity.Write(writer))
+					{
+						return false;
+					}
+					if ((this.optionalsMask & 16) != 0 && !this.angularVelocity.Write(writer))
+					{
+						return false;
+					}
+					if ((this.optionalsMask & 32) != 0)
+					{
+						writer.Write(this.wheelRpms.Length);
+						for (int j = 0; j < this.wheelRpms.Length; j++)
+						{
+							writer.Write(this.wheelRpms[j]);
+						}
 					}
 					flag = true;
 				}
@@ -96,6 +115,23 @@ namespace MWCO.Network.Messages
 					if ((this.optionalsMask & 4) != 0)
 					{
 						this.pickUp = reader.ReadBoolean();
+					}
+					if ((this.optionalsMask & 8) != 0 && !this.velocity.Read(reader))
+					{
+						return false;
+					}
+					if ((this.optionalsMask & 16) != 0 && !this.angularVelocity.Read(reader))
+					{
+						return false;
+					}
+					if ((this.optionalsMask & 32) != 0)
+					{
+						int num2 = reader.ReadInt32();
+						this.wheelRpms = new float[num2];
+						for (int k = 0; k < num2; k++)
+						{
+							this.wheelRpms[k] = reader.ReadSingle();
+						}
 					}
 					flag = true;
 				}
@@ -170,6 +206,69 @@ namespace MWCO.Network.Messages
 			}
 		}
 
+		public Vector3Message Velocity
+		{
+			get
+			{
+				return this.velocity;
+			}
+			set
+			{
+				this.velocity = value;
+				this.optionalsMask |= 8;
+			}
+		}
+
+		public bool HasVelocity
+		{
+			get
+			{
+				return (this.optionalsMask & 8) > 0;
+			}
+		}
+
+		public Vector3Message AngularVelocity
+		{
+			get
+			{
+				return this.angularVelocity;
+			}
+			set
+			{
+				this.angularVelocity = value;
+				this.optionalsMask |= 16;
+			}
+		}
+
+		public bool HasAngularVelocity
+		{
+			get
+			{
+				return (this.optionalsMask & 16) > 0;
+			}
+		}
+
+		public float[] WheelRpms
+		{
+			get
+			{
+				return this.wheelRpms;
+			}
+			set
+			{
+				this.wheelRpms = value;
+				this.optionalsMask |= 32;
+			}
+		}
+
+		public bool HasWheelRpms
+		{
+			get
+			{
+				return (this.optionalsMask & 32) > 0;
+			}
+		}
+
 		private byte optionalsMask;
 
 		public int objectID;
@@ -183,5 +282,11 @@ namespace MWCO.Network.Messages
 		private float[] syncedVariables;
 
 		private bool pickUp;
+
+		private Vector3Message velocity;
+
+		private Vector3Message angularVelocity;
+
+		private float[] wheelRpms;
 	}
 }

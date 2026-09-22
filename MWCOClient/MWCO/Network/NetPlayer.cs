@@ -1548,6 +1548,11 @@ namespace MWCO.Network
 							seatTransform.gameObject.SetActive(true);
 						}
 						playerVehicle.CurrentDrivingState = PlayerVehicle.DrivingStates.None;
+						if (this.steamId != this.netManager.localPlayer.steamId)
+						{
+							// v0.3.2 backport: remote driver left — clear stale inputs on observers' copies
+							playerVehicle.ResetRemoteInputs();
+						}
 					}
 				}
 				catch (Exception ex)

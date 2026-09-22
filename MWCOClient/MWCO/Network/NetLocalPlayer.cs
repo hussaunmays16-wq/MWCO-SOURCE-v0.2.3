@@ -537,6 +537,32 @@ namespace MWCO.Network
 			this.netManager.BroadcastMessage<ObjectSyncMessage>(objectSyncMessage, 1, 0);
 		}
 
+		public void SendObjectSync(int objectID, Vector3 pos, Quaternion rot, ObjectSyncManager.SyncTypes syncType, float[] syncedVariables, Vector3Message velocity, Vector3Message angularVelocity, float[] wheelRpms)
+		{
+			ObjectSyncMessage objectSyncMessage = new ObjectSyncMessage();
+			objectSyncMessage.objectID = objectID;
+			objectSyncMessage.position = Utils.GameVec3ToNet(pos);
+			objectSyncMessage.rotation = Utils.GameQuatToNet(rot);
+			objectSyncMessage.SyncType = (int)syncType;
+			if (syncedVariables != null)
+			{
+				objectSyncMessage.SyncedVariables = syncedVariables;
+			}
+			if (velocity != null)
+			{
+				objectSyncMessage.Velocity = velocity;
+			}
+			if (angularVelocity != null)
+			{
+				objectSyncMessage.AngularVelocity = angularVelocity;
+			}
+			if (wheelRpms != null && wheelRpms.Length > 0)
+			{
+				objectSyncMessage.WheelRpms = wheelRpms;
+			}
+			this.netManager.BroadcastMessage<ObjectSyncMessage>(objectSyncMessage, 1, 0);
+		}
+
 		public void WritePickupMessage(int objectID, bool pickUp)
 		{
 			ObjectSyncMessage objectSyncMessage = new ObjectSyncMessage();

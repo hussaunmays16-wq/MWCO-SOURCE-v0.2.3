@@ -613,6 +613,10 @@ namespace MWCO.Network
 							objectSyncComponent3.ActivateAIVehicle();
 						}
 						objectSyncComponent3.SetPositionAndRotation(Utils.NetVec3ToGame(msg.position), Utils.NetQuatToGame(msg.rotation));
+					if (msg.HasVelocity)
+					{
+						objectSyncComponent3.SetRemoteBodyState(Utils.NetVec3ToGame(msg.Velocity), msg.HasAngularVelocity ? Utils.NetVec3ToGame(msg.AngularVelocity) : Vector3.zero, msg.HasAngularVelocity, msg.HasWheelRpms ? msg.WheelRpms : null);
+					}
 					}
 				}
 			});
@@ -1414,6 +1418,10 @@ namespace MWCO.Network
 						objectSyncComponent.ActivateAIVehicle();
 					}
 					objectSyncComponent.SetPositionAndRotation(Utils.NetVec3ToGame(msg.position), Utils.NetQuatToGame(msg.rotation));
+					if (msg.HasVelocity)
+					{
+						objectSyncComponent.SetRemoteBodyState(Utils.NetVec3ToGame(msg.Velocity), msg.HasAngularVelocity ? Utils.NetVec3ToGame(msg.AngularVelocity) : Vector3.zero, msg.HasAngularVelocity, msg.HasWheelRpms ? msg.WheelRpms : null);
+					}
 				}
 			}
 		}
